@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+
+{% block title %}Know Your Fan | Esports Fan Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-content">
+        <h1 class="hero-title">Connect with <span class="text-primary">Esports Organizations</span> as a Verified Fan</h1>
+        <p class="hero-subtitle">Share your passion for esports, validate your identity, and unlock exclusive fan experiences.</p>
+        <div class="d-flex justify-content-center gap-3">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard.overview') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i> Create Your Fan Profile
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Why Create a Fan Profile?</h2>
+            <p class="lead text-secondary">Unlock a new way to connect with your favorite esports organizations</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3 class="h4">Identity Verification</h3>
+                    <p class="text-secondary">Prove you're a real fan with AI-powered document validation and social media linking.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="h4">Exclusive Access</h3>
+                    <p class="text-secondary">Get priority access to esports events, merchandise drops, and team meet-and-greets.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="h4">Community Recognition</h3>
+                    <p class="text-secondary">Be recognized as an authentic fan by teams and fellow enthusiasts in the esports community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 gaming-setup-bg">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-secondary">Four simple steps to create your verified fan profile</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3 text-primary">1</div>
+                        <h3 class="h5">Create an Account</h3>
+                        <p class="text-secondary small">Sign up with your email and basic information to get started.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3 text-primary">2</div>
+                        <h3 class="h5">Complete Your Profile</h3>
+                        <p class="text-secondary small">Add your interests, favorite teams, and gaming experience.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3 text-primary">3</div>
+                        <h3 class="h5">Verify Your Identity</h3>
+                        <p class="text-secondary small">Upload documents and link your social media accounts for AI validation.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3 text-primary">4</div>
+                        <h3 class="h5">Connect With Teams</h3>
+                        <p class="text-secondary small">Share your fan score and verified profile with esports organizations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Event Showcase -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Esports Events Access</h2>
+            <p class="lead text-secondary">Get exclusive access to top esports tournaments and team events</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e" class="card-img-top" alt="Esports tournament">
+                    <div class="card-body">
+                        <h5 class="card-title">Major Championships</h5>
+                        <p class="card-text">Get priority tickets and exclusive behind-the-scenes access at major tournaments.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="https://images.unsplash.com/photo-1558008258-3256797b43f3" class="card-img-top" alt="Team meet and greet">
+                    <div class="card-body">
+                        <h5 class="card-title">Team Meet & Greets</h5>
+                        <p class="card-text">Meet your favorite players with exclusive fan events throughout the season.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="https://images.unsplash.com/photo-1607892379516-5ff729bbc620" class="card-img-top" alt="Training facility tours">
+                    <div class="card-body">
+                        <h5 class="card-title">Training Facility Tours</h5>
+                        <p class="card-text">Get an inside look at team training facilities and gaming setups.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Teams Section -->
+<section class="py-5 esports-event-bg">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Connect With Top Esports Teams</h2>
+            <p class="lead text-secondary">Our platform helps you engage with your favorite organizations</p>
+        </div>
+        
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="text-primary mb-0">FURIA</h4>
+                        <p class="small text-secondary">CSGO, Valorant, R6</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="text-warning mb-0">NAVI</h4>
+                        <p class="small text-secondary">CSGO, Dota 2</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="text-info mb-0">Cloud9</h4>
+                        <p class="small text-secondary">LoL, CSGO, Valorant</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="text-danger mb-0">FaZe</h4>
+                        <p class="small text-secondary">CSGO, CoD, Fortnite</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg pulse-animation">
+                Join Now & Connect With Teams
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Frequently Asked Questions</h2>
+            <p class="lead text-secondary">Find answers to common questions about our platform</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                How is my identity verified?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We use AI-powered validation to verify the documents you upload and analyze your linked social media profiles for esports-related content. This helps organizations confirm that you're a genuine fan.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Is my personal information secure?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, we take security very seriously. Your documents are processed securely and not stored permanently. All your personal information is encrypted, and we follow strict data protection guidelines.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                What benefits do I get as a verified fan?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                As a verified fan, you can receive early access to ticket sales, exclusive merchandise offers, invitations to private team events, special digital content, and other benefits that organizations reserve for their most dedicated supporters.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Which esports organizations are on the platform?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We're continuously adding new organizations, but currently have partnerships with several top teams including FURIA, Cloud9, NAVI, and FaZe Clan. Visit your dashboard after registering to see the complete and updated list.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-dark">
+    <div class="container py-4 text-center">
+        <h2 class="display-5 fw-bold mb-4">Ready to Connect With Your Favorite Teams?</h2>
+        <p class="lead text-secondary mb-5">Join thousands of verified fans already on our platform</p>
+        
+        <div class="d-flex justify-content-center gap-3">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard.overview') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-user-plus me-2"></i> Create Your Fan Profile
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-5">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% if section == 'about' %}
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="display-5 fw-bold mb-4">About Know Your Fan</h2>
+                    <p class="lead">We're bridging the gap between esports organizations and their most dedicated fans.</p>
+                    <p>Our platform uses AI-powered validation to help organizations identify and reward their authentic fans while providing fans with exclusive access and experiences.</p>
+                    <p>Founded by a team of esports enthusiasts and technology experts, our mission is to create more meaningful connections in the esports ecosystem that benefit both fans and organizations.</p>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1612151388040-9ec75d2de8c7" class="img-fluid rounded" alt="Esports fans cheering">
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% if section == 'privacy' %}
+    <!-- Privacy Policy Section -->
+    <section id="privacy" class="py-5">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4">Privacy Policy</h2>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Information We Collect</h3>
+                    <p>We collect information you provide directly, including:</p>
+                    <ul>
+                        <li>Personal information such as name, email, address, and phone number</li>
+                        <li>Identity verification documents</li>
+                        <li>Social media profile information</li>
+                        <li>Esports platform profile information</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">How We Use Your Information</h3>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Verify your identity and fan status</li>
+                        <li>Provide access to exclusive content and events</li>
+                        <li>Improve our services and user experience</li>
+                        <li>Connect you with relevant esports organizations</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Data Security</h3>
+                    <p>We implement appropriate security measures to protect your personal information:</p>
+                    <ul>
+                        <li>Encryption for all sensitive data</li>
+                        <li>Secure processing of identity documents</li>
+                        <li>Limited data retention periods</li>
+                        <li>Regular security audits</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Your Rights</h3>
+                    <p>You have several rights regarding your personal data:</p>
+                    <ul>
+                        <li>Right to access your data</li>
+                        <li>Right to correct inaccurate information</li>
+                        <li>Right to delete your account and data</li>
+                        <li>Right to restrict or object to processing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% if section == 'terms' %}
+    <!-- Terms of Service Section -->
+    <section id="terms" class="py-5">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4">Terms of Service</h2>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Account Registration</h3>
+                    <p>By registering an account on our platform, you agree to:</p>
+                    <ul>
+                        <li>Provide accurate and complete information</li>
+                        <li>Maintain the security of your account credentials</li>
+                        <li>Accept responsibility for all activities under your account</li>
+                        <li>Notify us immediately of any unauthorized use</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">User Conduct</h3>
+                    <p>When using our platform, you agree not to:</p>
+                    <ul>
+                        <li>Impersonate any person or entity</li>
+                        <li>Upload false or misleading documents</li>
+                        <li>Engage in fraudulent activity</li>
+                        <li>Attempt to circumvent our verification systems</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Intellectual Property</h3>
+                    <p>All content on our platform, including text, graphics, logos, and software, is protected by intellectual property rights. You may not:</p>
+                    <ul>
+                        <li>Copy or reproduce any part of our platform without permission</li>
+                        <li>Use our trademarks or logos without authorization</li>
+                        <li>Modify or create derivative works of our content</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Termination</h3>
+                    <p>We reserve the right to terminate or suspend your account at our discretion if:</p>
+                    <ul>
+                        <li>You violate these terms of service</li>
+                        <li>You provide fraudulent information</li>
+                        <li>Your account shows suspicious activity</li>
+                        <li>We are required to do so by law</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% endblock %}

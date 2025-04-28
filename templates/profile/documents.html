@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Document Verification | Know Your Fan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        <i class="fas fa-id-card me-2"></i> Document Verification
+                    </h2>
+                    
+                    <!-- Profile Completion Progress -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-2">Profile Completion</h6>
+                        <div class="progress" style="height: 10px;">
+                            <div id="completenessProgress" class="progress-bar bg-warning" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="small text-secondary">Step 3 of 4</span>
+                            <span class="small text-secondary">Next: Social Media & Gaming Profiles</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Navigation -->
+                    <div class="profile-navigation mb-4">
+                        <div class="d-flex flex-wrap">
+                            <a href="{{ url_for('profile.basic_info') }}" class="profile-nav-link">
+                                <i class="fas fa-address-card me-2"></i> Basic Info
+                            </a>
+                            <a href="{{ url_for('profile.interests') }}" class="profile-nav-link">
+                                <i class="fas fa-star me-2"></i> Interests
+                            </a>
+                            <a href="{{ url_for('profile.documents') }}" class="profile-nav-link active">
+                                <i class="fas fa-id-card me-2"></i> Documents
+                            </a>
+                            <a href="{{ url_for('social.social_media') }}" class="profile-nav-link">
+                                <i class="fas fa-share-alt me-2"></i> Social Media
+                            </a>
+                            <a href="{{ url_for('social.esports_profiles') }}" class="profile-nav-link">
+                                <i class="fas fa-gamepad me-2"></i> Gaming Profiles
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Document Upload Form -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Upload Identity Document</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-secondary mb-4">
+                                        Please upload a valid identification document to verify your identity. 
+                                        This helps us ensure you're a real fan and protect the community.
+                                    </p>
+                                    
+                                    <form method="POST" action="{{ url_for('profile.documents') }}" class="needs-validation" novalidate enctype="multipart/form-data" id="documentUploadForm">
+                                        {{ form.hidden_tag() }}
+                                        
+                                        <div class="mb-3">
+                                            <label for="doc_type" class="form-label">{{ form.doc_type.label }}</label>
+                                            {{ form.doc_type(class="form-select") }}
+                                            {% for error in form.doc_type.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="doc_number" class="form-label">{{ form.doc_number.label }}</label>
+                                            {{ form.doc_number(class="form-control", placeholder="Enter the document number") }}
+                                            {% for error in form.doc_number.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label for="document_file" class="form-label">{{ form.document_file.label }}</label>
+                                            {{ form.document_file(class="form-control", accept=".jpg,.jpeg,.png,.pdf") }}
+                                            <div class="form-text">
+                                                Acceptable formats: JPG, PNG, PDF. Max size: 16MB
+                                            </div>
+                                            {% for error in form.document_file.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <!-- Document Preview -->
+                                        <div id="documentPreview" class="mb-4"></div>
+                                        
+                                        <!-- AI Validation Status -->
+                                        <div id="aiValidationStatus"></div>
+                                        
+                                        <div class="d-grid gap-2">
+                                            {{ form.submit(class="btn btn-primary") }}
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Upload Instructions -->
+                            <div class="card bg-dark">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-info-circle me-2"></i> Upload Guidelines
+                                    </h5>
+                                    <ul class="mb-0 ps-3 text-secondary small">
+                                        <li>Make sure the document is clearly visible</li>
+                                        <li>All text should be readable</li>
+                                        <li>Document should not be expired</li>
+                                        <li>Your face and document details must be clearly visible</li>
+                                        <li>Upload only official government-issued IDs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <!-- Uploaded Documents -->
+                            <div class="card">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Your Verified Documents</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if documents %}
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Document Type</th>
+                                                        <th>Document Number</th>
+                                                        <th>Status</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for document in documents %}
+                                                    <tr>
+                                                        <td>
+                                                            {% if document.doc_type == 'id' %}
+                                                                <i class="fas fa-id-card me-2"></i> ID Card
+                                                            {% elif document.doc_type == 'cpf' %}
+                                                                <i class="fas fa-id-badge me-2"></i> CPF Card
+                                                            {% elif document.doc_type == 'passport' %}
+                                                                <i class="fas fa-passport me-2"></i> Passport
+                                                            {% elif document.doc_type == 'drivers_license' %}
+                                                                <i class="fas fa-car me-2"></i> Driver's License
+                                                            {% else %}
+                                                                <i class="fas fa-file-alt me-2"></i> {{ document.doc_type }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ document.doc_number }}</td>
+                                                        <td>
+                                                            {% if document.validated %}
+                                                                <span class="badge bg-success">Verified</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Failed Verification</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ document.uploaded_at.strftime('%Y-%m-%d') }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- Verification Summary -->
+                                        <div class="mt-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="me-3">
+                                                    <img src="https://images.unsplash.com/photo-1499557354967-2b2d8910bcca" class="rounded-circle" width="50" height="50" alt="User profile">
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ current_user.profile.full_name if current_user.profile else current_user.username }}</h6>
+                                                    <p class="text-secondary small mb-0">
+                                                        {% if documents|selectattr('validated', 'equalto', true)|list|length > 0 %}
+                                                            <span class="text-success">
+                                                                <i class="fas fa-check-circle me-1"></i> Identity Verified
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="text-warning">
+                                                                <i class="fas fa-exclamation-circle me-1"></i> Verification Pending
+                                                            </span>
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-file-upload fa-4x mb-3 text-secondary"></i>
+                                            <h5>No Documents Uploaded</h5>
+                                            <p class="text-secondary">
+                                                Upload an identification document to verify your identity and enhance your fan profile.
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="{{ url_for('profile.interests') }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left me-2"></i> Previous
+                                        </a>
+                                        <a href="{{ url_for('social.social_media') }}" class="btn btn-primary">
+                                            Next: Social Media <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Verification Process -->
+                            <div class="card mt-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-robot me-2"></i> AI Verification Process
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-secondary small">
+                                        Our AI-powered verification system analyzes your document to:
+                                    </p>
+                                    <ul class="text-secondary small">
+                                        <li>Confirm document authenticity</li>
+                                        <li>Match personal details with your profile</li>
+                                        <li>Detect any signs of tampering</li>
+                                        <li>Verify that the document belongs to you</li>
+                                    </ul>
+                                    <p class="text-secondary small mb-0">
+                                        This process is automated and secure. Your document is not stored permanently after verification.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalLabel">Document Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="documentModalImage" src="" class="img-fluid" alt="Document preview">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+{% endblock %}

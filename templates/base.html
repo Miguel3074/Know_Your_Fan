@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Know Your Fan | Esports Fan Platform{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-gamepad me-2"></i>
+                Know Your <span class="brand-accent">Fan</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard.overview') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Profile
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('profile.basic_info') }}">Basic Information</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('profile.documents') }}">Documents</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('social.social_media') }}">Social Media</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('social.esports_profiles') }}">Esports Profiles</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Language Selector -->
+                    <select id="languageSelector" class="form-select form-select-sm me-3" style="width: 120px;">
+                        <option value="en">English</option>
+                        <option value="pt">Português</option>
+                    </select>
+                    
+                    <!-- User Actions -->
+                    <div class="d-flex">
+                        {% if current_user.is_authenticated %}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-1"></i> {{ current_user.username }}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="{{ url_for('dashboard.overview') }}">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('profile.basic_info') }}">My Profile</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">Login</a>
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Sign Up</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div id="flashMessages" class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Know Your Fan</h5>
+                    <p class="text-secondary">Connecting esports organizations with their passionate fans through AI-powered validation.</p>
+                    <div class="mt-3">
+                        <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4 mb-md-0">
+                    <h6>Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}" class="footer-link">Home</a></li>
+                        <li><a href="{{ url_for('about') }}" class="footer-link">About</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('dashboard.overview') }}" class="footer-link">Dashboard</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('auth.register') }}" class="footer-link">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-2 col-6 mb-4 mb-md-0">
+                    <h6>Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('privacy') }}" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('terms') }}" class="footer-link">Terms of Use</a></li>
+                        <li><a href="#" class="footer-link">Help Center</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Subscribe to our newsletter</h6>
+                    <p class="text-secondary small">Get the latest updates on esports events and fan opportunities.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your email" aria-label="Email for newsletter">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-secondary small">© 2023 Know Your Fan. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0 text-secondary small">Powered by AI Validation</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

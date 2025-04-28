@@ -1,0 +1,386 @@
+:root {
+    /* Esports-themed color variables */
+    --furia-orange: #ff5500;
+    --furia-dark: #171b20;
+    --game-blue: #00a8ff;
+    --game-purple: #9c44dc;
+    --game-red: #e91e63;
+    --game-green: #46c93a;
+    --bg-dark: #0f1923;
+    --bg-darker: #0a1018;
+    --text-primary: #ffffff;
+    --text-secondary: #8b9cb3;
+}
+
+/* Base styling */
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Poppins', 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content area */
+.main-content {
+    flex: 1;
+}
+
+/* Header and navigation */
+.navbar {
+    background-color: var(--bg-darker) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.brand-accent {
+    color: var(--furia-orange);
+}
+
+.nav-link {
+    position: relative;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--furia-orange) !important;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--furia-orange);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--furia-orange);
+    border-color: var(--furia-orange);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #ff6e33;
+    border-color: #ff6e33;
+}
+
+.btn-secondary {
+    background-color: var(--game-blue);
+    border-color: var(--game-blue);
+}
+
+.btn-outline-primary {
+    color: var(--furia-orange);
+    border-color: var(--furia-orange);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--furia-orange);
+    color: white;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-darker);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    color: var(--text-primary);
+}
+
+.card-text {
+    color: var(--text-secondary);
+}
+
+/* Forms */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--furia-orange);
+    box-shadow: 0 0 0 0.25rem rgba(255, 85, 0, 0.25);
+    color: var(--text-primary);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.form-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.form-select:focus {
+    border-color: var(--furia-orange);
+    box-shadow: 0 0 0 0.25rem rgba(255, 85, 0, 0.25);
+}
+
+/* Hero section */
+.hero-section {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(rgba(10, 16, 24, 0.8), rgba(10, 16, 24, 0.9)),
+                url('https://images.unsplash.com/photo-1558744059-a9e737085db7') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.hero-content {
+    max-width: 800px;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-secondary);
+}
+
+/* Features section */
+.features-section {
+    padding: 5rem 0;
+}
+
+.feature-card {
+    min-height: 280px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--furia-orange);
+}
+
+/* Dashboard */
+.dashboard-header {
+    background-color: var(--bg-darker);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.progress-bar {
+    background-color: var(--furia-orange);
+}
+
+.stat-card {
+    border-left: 4px solid var(--furia-orange);
+}
+
+.validation-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.document-card {
+    position: relative;
+}
+
+/* Social media */
+.social-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.twitter-color {
+    color: #1DA1F2;
+}
+
+.instagram-color {
+    color: #E1306C;
+}
+
+.facebook-color {
+    color: #4267B2;
+}
+
+.youtube-color {
+    color: #FF0000;
+}
+
+.tiktok-color {
+    color: #69C9D0;
+}
+
+/* Esports Platforms */
+.platform-icon {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--bg-darker);
+    margin-right: 0.5rem;
+}
+
+.gaming-setup-bg {
+    background: linear-gradient(rgba(10, 16, 24, 0.8), rgba(10, 16, 24, 0.9)),
+                url('https://images.unsplash.com/photo-1598550457678-aa60413d7c80') no-repeat center center;
+    background-size: cover;
+}
+
+.esports-event-bg {
+    background: linear-gradient(rgba(10, 16, 24, 0.8), rgba(10, 16, 24, 0.9)),
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e') no-repeat center center;
+    background-size: cover;
+}
+
+/* Profile sections */
+.profile-section {
+    padding: 3rem 0;
+}
+
+.profile-navigation {
+    background-color: var(--bg-darker);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.profile-nav-link {
+    color: var(--text-secondary);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.profile-nav-link:hover,
+.profile-nav-link.active {
+    background-color: rgba(255, 85, 0, 0.1);
+    color: var(--furia-orange);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--bg-darker);
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: var(--furia-orange);
+    text-decoration: none;
+}
+
+.footer-social-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.footer-social-icon:hover {
+    color: var(--furia-orange);
+}
+
+/* Animation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* Scores and Badges */
+.fan-score {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--furia-orange);
+}
+
+.score-card {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--bg-darker);
+    border: 3px solid var(--furia-orange);
+    margin: 0 auto;
+}
+
+.relevance-score {
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--bg-darker);
+}
+
+.relevance-score-fill {
+    height: 100%;
+    border-radius: 4px;
+    background-color: var(--furia-orange);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+    
+    .feature-card {
+        margin-bottom: 2rem;
+    }
+}

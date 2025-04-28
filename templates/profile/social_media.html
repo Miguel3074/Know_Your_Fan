@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}Link Social Media | Know Your Fan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        <i class="fas fa-share-alt me-2"></i> Link Your Social Media
+                    </h2>
+                    
+                    <!-- Profile Completion Progress -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-2">Profile Completion</h6>
+                        <div class="progress" style="height: 10px;">
+                            <div id="completenessProgress" class="progress-bar bg-success" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="small text-secondary">Step 4 of 4</span>
+                            <span class="small text-secondary">Final Step</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Navigation -->
+                    <div class="profile-navigation mb-4">
+                        <div class="d-flex flex-wrap">
+                            <a href="{{ url_for('profile.basic_info') }}" class="profile-nav-link">
+                                <i class="fas fa-address-card me-2"></i> Basic Info
+                            </a>
+                            <a href="{{ url_for('profile.interests') }}" class="profile-nav-link">
+                                <i class="fas fa-star me-2"></i> Interests
+                            </a>
+                            <a href="{{ url_for('profile.documents') }}" class="profile-nav-link">
+                                <i class="fas fa-id-card me-2"></i> Documents
+                            </a>
+                            <a href="{{ url_for('social.social_media') }}" class="profile-nav-link active">
+                                <i class="fas fa-share-alt me-2"></i> Social Media
+                            </a>
+                            <a href="{{ url_for('social.esports_profiles') }}" class="profile-nav-link">
+                                <i class="fas fa-gamepad me-2"></i> Gaming Profiles
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Social Media Form -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Add Social Media Account</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-secondary mb-4">
+                                        Connect your social media accounts to enhance your fan profile and validate your esports interests.
+                                    </p>
+                                    
+                                    <form method="POST" action="{{ url_for('social.social_media') }}" class="needs-validation" novalidate>
+                                        {{ form.hidden_tag() }}
+                                        
+                                        <div class="mb-3">
+                                            <label for="platform" class="form-label">{{ form.platform.label }}</label>
+                                            {{ form.platform(class="form-select") }}
+                                            {% for error in form.platform.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">{{ form.username.label }}</label>
+                                            {{ form.username(class="form-control", placeholder="Your username on this platform") }}
+                                            {% for error in form.username.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label for="profile_url" class="form-label">{{ form.profile_url.label }}</label>
+                                            {{ form.profile_url(class="form-control", placeholder="https://...") }}
+                                            <div class="form-text">
+                                                Full URL to your profile page (must start with http:// or https://)
+                                            </div>
+                                            {% for error in form.profile_url.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2">
+                                            {{ form.submit(class="btn btn-primary") }}
+                                        </div>
+                                    </form>
+                                    
+                                    <div class="mt-4 text-center">
+                                        <p class="text-secondary small mb-2">In a future update, you'll be able to connect via OAuth:</p>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-sm btn-outline-light" disabled>
+                                                <i class="fab fa-twitter"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-light" disabled>
+                                                <i class="fab fa-instagram"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-light" disabled>
+                                                <i class="fab fa-facebook"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-light" disabled>
+                                                <i class="fab fa-youtube"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-light" disabled>
+                                                <i class="fab fa-tiktok"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Why Connect Social -->
+                            <div class="card bg-dark">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-question-circle me-2"></i> Why Connect Social Media?
+                                    </h5>
+                                    <ul class="mb-0 ps-3 text-secondary small">
+                                        <li>Validate your interest in esports</li>
+                                        <li>Identify your favorite teams and games</li>
+                                        <li>Show your engagement with esports content</li>
+                                        <li>Receive personalized recommendations</li>
+                                        <li>Increase your fan authenticity score</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <!-- Connected Social Media -->
+                            <div class="card">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Connected Accounts</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if social_accounts %}
+                                        <div class="list-group">
+                                            {% for account in social_accounts %}
+                                                <div class="list-group-item list-group-item-action bg-transparent border-secondary">
+                                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            {% if account.platform == 'twitter' %}
+                                                                <i class="fab fa-twitter fa-2x twitter-color me-3"></i>
+                                                            {% elif account.platform == 'instagram' %}
+                                                                <i class="fab fa-instagram fa-2x instagram-color me-3"></i>
+                                                            {% elif account.platform == 'facebook' %}
+                                                                <i class="fab fa-facebook fa-2x facebook-color me-3"></i>
+                                                            {% elif account.platform == 'youtube' %}
+                                                                <i class="fab fa-youtube fa-2x youtube-color me-3"></i>
+                                                            {% elif account.platform == 'tiktok' %}
+                                                                <i class="fab fa-tiktok fa-2x tiktok-color me-3"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-globe fa-2x me-3"></i>
+                                                            {% endif %}
+                                                            
+                                                            <div>
+                                                                <h6 class="mb-0">{{ account.platform|capitalize }}</h6>
+                                                                <p class="mb-0 small text-secondary">@{{ account.username }}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="d-flex">
+                                                            <button class="btn btn-sm btn-outline-primary me-2 analyze-social-button"
+                                                                    data-social-id="{{ account.id }}"
+                                                                    data-platform="{{ account.platform }}">
+                                                                <i class="fas fa-chart-bar me-1"></i> Analyze
+                                                            </button>
+                                                            
+                                                            <form action="{{ url_for('social.remove_social_media', id=account.id) }}" method="post" class="d-inline">
+                                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div id="analysis-result-{{ account.id }}"></div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-share-alt fa-4x mb-3 text-secondary"></i>
+                                            <h5>No Social Media Connected</h5>
+                                            <p class="text-secondary">
+                                                Connect your social media accounts to enhance your fan profile and show your engagement with esports content.
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="{{ url_for('profile.documents') }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left me-2"></i> Previous
+                                        </a>
+                                        <a href="{{ url_for('social.esports_profiles') }}" class="btn btn-primary">
+                                            Next: Gaming Profiles <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Social Media Stats -->
+                            <div class="card mt-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-line me-2"></i> AI Analysis Explained
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-secondary small">
+                                        When you click "Analyze", our AI system examines your social media profile to:
+                                    </p>
+                                    <ul class="text-secondary small">
+                                        <li>Identify esports-related content and interests</li>
+                                        <li>Detect teams and games you follow</li>
+                                        <li>Measure your engagement with esports content</li>
+                                        <li>Calculate an esports relevance score</li>
+                                    </ul>
+                                    <p class="text-secondary small mb-0">
+                                        This helps organizations understand your authentic interest in esports and better serve your fan experience.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Platform icon preview
+    const platformSelect = document.getElementById('platform');
+    if (platformSelect) {
+        platformSelect.addEventListener('change', function() {
+            const platform = this.value;
+            const placeholder = document.querySelector('input[name="username"]').placeholder;
+            
+            // Update placeholder based on platform
+            if (platform === 'twitter') {
+                document.querySelector('input[name="username"]').placeholder = 'Username without @ (e.g., esports_fan)';
+            } else if (platform === 'instagram') {
+                document.querySelector('input[name="username"]').placeholder = 'Instagram username';
+            } else if (platform === 'youtube') {
+                document.querySelector('input[name="username"]').placeholder = 'Channel name or ID';
+            } else {
+                document.querySelector('input[name="username"]').placeholder = 'Your username on this platform';
+            }
+            
+            // Update URL placeholder
+            if (platform === 'twitter') {
+                document.querySelector('input[name="profile_url"]').placeholder = 'https://twitter.com/username';
+            } else if (platform === 'instagram') {
+                document.querySelector('input[name="profile_url"]').placeholder = 'https://instagram.com/username';
+            } else if (platform === 'facebook') {
+                document.querySelector('input[name="profile_url"]').placeholder = 'https://facebook.com/username';
+            } else if (platform === 'youtube') {
+                document.querySelector('input[name="profile_url"]').placeholder = 'https://youtube.com/c/channelname';
+            } else if (platform === 'tiktok') {
+                document.querySelector('input[name="profile_url"]').placeholder = 'https://tiktok.com/@username';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

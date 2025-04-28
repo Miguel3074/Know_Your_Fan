@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile Information | Know Your Fan{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        {% if section == 'interests' %}
+                        <i class="fas fa-star me-2"></i> Your Esports Interests
+                        {% else %}
+                        <i class="fas fa-user-edit me-2"></i> Basic Profile Information
+                        {% endif %}
+                    </h2>
+                    
+                    <!-- Profile Completion Progress -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-2">Profile Completion</h6>
+                        <div class="progress" style="height: 10px;">
+                            <div id="completenessProgress" class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="small text-secondary">Step {% if section == 'interests' %}2{% else %}1{% endif %} of 4</span>
+                            <span class="small text-secondary">
+                                {% if section == 'interests' %}
+                                Next: Document Verification
+                                {% else %}
+                                Next: Esports Interests
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Navigation -->
+                    <div class="profile-navigation mb-4">
+                        <div class="d-flex flex-wrap">
+                            <a href="{{ url_for('profile.basic_info') }}" class="profile-nav-link {% if not section %}active{% endif %}">
+                                <i class="fas fa-address-card me-2"></i> Basic Info
+                            </a>
+                            <a href="{{ url_for('profile.interests') }}" class="profile-nav-link {% if section == 'interests' %}active{% endif %}">
+                                <i class="fas fa-star me-2"></i> Interests
+                            </a>
+                            <a href="{{ url_for('profile.documents') }}" class="profile-nav-link">
+                                <i class="fas fa-id-card me-2"></i> Documents
+                            </a>
+                            <a href="{{ url_for('social.social_media') }}" class="profile-nav-link">
+                                <i class="fas fa-share-alt me-2"></i> Social Media
+                            </a>
+                            <a href="{{ url_for('social.esports_profiles') }}" class="profile-nav-link">
+                                <i class="fas fa-gamepad me-2"></i> Gaming Profiles
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Form -->
+                    {% if section == 'interests' %}
+                    <form method="POST" action="{{ url_for('profile.interests') }}" class="needs-validation" novalidate>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('profile.basic_info') }}" class="needs-validation" novalidate>
+                    {% endif %}
+                        {{ form.hidden_tag() }}
+                        
+                        {% if not section %}
+                        <!-- Basic Information Form -->
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="full_name" class="form-label">{{ form.full_name.label }}</label>
+                                {{ form.full_name(class="form-control", placeholder="Enter your full name") }}
+                                {% for error in form.full_name.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="cpf" class="form-label">{{ form.cpf.label }}</label>
+                                {{ form.cpf(class="form-control", placeholder="XXX.XXX.XXX-XX") }}
+                                <div class="form-text">Brazilian ID number format: XXX.XXX.XXX-XX</div>
+                                {% for error in form.cpf.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="birthdate" class="form-label">{{ form.birthdate.label }}</label>
+                                {{ form.birthdate(class="form-control date-picker", placeholder="YYYY-MM-DD") }}
+                                {% for error in form.birthdate.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="address" class="form-label">{{ form.address.label }}</label>
+                                {{ form.address(class="form-control", placeholder="Street address") }}
+                                {% for error in form.address.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="city" class="form-label">{{ form.city.label }}</label>
+                                {{ form.city(class="form-control", placeholder="City") }}
+                                {% for error in form.city.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <label for="state" class="form-label">{{ form.state.label }}</label>
+                                {{ form.state(class="form-control", placeholder="State") }}
+                                {% for error in form.state.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="postal_code" class="form-label">{{ form.postal_code.label }}</label>
+                                {{ form.postal_code(class="form-control", placeholder="Postal code") }}
+                                {% for error in form.postal_code.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="country" class="form-label">{{ form.country.label }}</label>
+                                {{ form.country(class="form-control", placeholder="Country") }}
+                                {% for error in form.country.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="phone" class="form-label">{{ form.phone.label }}</label>
+                                {{ form.phone(class="form-control", placeholder="+55 (XX) XXXXX-XXXX") }}
+                                {% for error in form.phone.errors %}
+                                    <div class="text-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        {% else %}
+                        <!-- Interests Form -->
+                        <div class="mb-4">
+                            <label for="interests" class="form-label">{{ form.interests.label }}</label>
+                            {{ form.interests(class="form-control tag-input", rows="3", placeholder="What aspects of esports interest you the most? (tournaments, teams, players, etc.)") }}
+                            {% for error in form.interests.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="favorite_games" class="form-label">{{ form.favorite_games.label }}</label>
+                            {{ form.favorite_games(class="form-control tag-input", rows="3", placeholder="What esports games do you play or follow? (CS:GO, Valorant, League of Legends, etc.)") }}
+                            {% for error in form.favorite_games.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="favorite_teams" class="form-label">{{ form.favorite_teams.label }}</label>
+                            {{ form.favorite_teams(class="form-control tag-input", rows="3", placeholder="Which esports teams do you support? (FURIA, Cloud9, etc.)") }}
+                            {% for error in form.favorite_teams.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="gaming_experience" class="form-label">{{ form.gaming_experience.label }}</label>
+                            {{ form.gaming_experience(class="form-control", rows="4", placeholder="Tell us about your gaming history and experience level (casual, competitive, etc.)") }}
+                            {% for error in form.gaming_experience.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            {% if section == 'interests' %}
+                            <a href="{{ url_for('profile.basic_info') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Previous
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Save and Continue <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            {% else %}
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i> Home
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Save and Continue <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Privacy Information -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-primary me-3 fa-2x"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Your Data Security</h5>
+                            <p class="card-text text-secondary small mb-0">
+                                All your personal information is encrypted and securely stored. We only use this information to verify your identity and provide you with tailored esports experiences.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize date picker
+    flatpickr(".date-picker", {
+        dateFormat: "Y-m-d",
+        maxDate: new Date(),
+        yearRange: 100
+    });
+    
+    // Update progress bar
+    const completenessProgress = document.getElementById('completenessProgress');
+    if (completenessProgress) {
+        {% if section == 'interests' %}
+        completenessProgress.style.width = '50%';
+        completenessProgress.setAttribute('aria-valuenow', 50);
+        completenessProgress.classList.add('bg-warning');
+        {% else %}
+        completenessProgress.style.width = '25%';
+        completenessProgress.setAttribute('aria-valuenow', 25);
+        completenessProgress.classList.add('bg-danger');
+        {% endif %}
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,639 @@
+{% extends 'base.html' %}
+
+{% block title %}Fan Dashboard | Know Your Fan{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fan-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .fan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .verification-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--furia-orange);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-right: 15px;
+    }
+    
+    .stat-card {
+        border-left: 4px solid var(--furia-orange);
+    }
+    
+    .profile-progress {
+        height: 8px;
+        border-radius: 4px;
+    }
+    
+    .chart-container {
+        height: 250px;
+        position: relative;
+    }
+    
+    .document-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="mb-2">Welcome, {{ current_user.username }}!</h1>
+                <p class="text-secondary mb-0">Here's an overview of your esports fan profile and verification status.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="{{ url_for('profile.basic_info') }}" class="btn btn-outline-light me-2">
+                    <i class="fas fa-edit me-2"></i> Edit Profile
+                </a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-plus me-2"></i> Add Info
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('profile.documents') }}">Upload Document</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('social.social_media') }}">Link Social Media</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('social.esports_profiles') }}">Add Gaming Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Profile Completion -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">Profile Completion</h5>
+                            <div class="progress profile-progress mb-2">
+                                <div class="progress-bar {% if completion_percentage < 30 %}bg-danger{% elif completion_percentage < 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ completion_percentage }}%;" 
+                                     aria-valuenow="{{ completion_percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100"></div>
+                            </div>
+                            <p class="mb-0 small text-secondary">
+                                <span class="fw-bold">{{ completion_percentage }}% complete</span> - 
+                                {% if completion_percentage < 100 %}
+                                {% if not profile or not profile.completed %}
+                                Complete your <a href="{{ url_for('profile.basic_info') }}">basic information</a>
+                                {% elif verified_documents == 0 %}
+                                Upload and verify a <a href="{{ url_for('profile.documents') }}">document</a>
+                                {% elif social_accounts|length == 0 and esports_profiles|length == 0 %}
+                                Link your <a href="{{ url_for('social.social_media') }}">social media</a> or <a href="{{ url_for('social.esports_profiles') }}">gaming profiles</a>
+                                {% endif %}
+                                {% else %}
+                                Your profile is complete! <i class="fas fa-check-circle text-success"></i>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <div class="score-card">
+                                <div class="fan-score">{{ fan_score }}</div>
+                                <div class="text-secondary small">Fan Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <!-- Document Stats -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stat-icon bg-dark text-primary">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Document Verification</h6>
+                            <p class="text-secondary small mb-0">Identity confirmation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="display-6 me-3">{{ verified_documents }}/{{ documents|length }}</div>
+                        <div>
+                            <div class="mb-1">Verified Documents</div>
+                            <div>
+                                {% if verified_documents > 0 %}
+                                <span class="badge bg-success">Identity Verified</span>
+                                {% elif documents|length > 0 %}
+                                <span class="badge bg-warning">Verification Pending</span>
+                                {% else %}
+                                <span class="badge bg-danger">Not Verified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if documents|length == 0 %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('profile.documents') }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-upload me-2"></i> Upload Document
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Media Stats -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stat-icon bg-dark text-primary">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Social Presence</h6>
+                            <p class="text-secondary small mb-0">Linked platforms</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="display-6 me-3">{{ social_accounts|length }}</div>
+                        <div>
+                            <div class="mb-1">Social Accounts</div>
+                            <div>
+                                {% if social_accounts|length > 2 %}
+                                <span class="badge bg-success">Strong Presence</span>
+                                {% elif social_accounts|length > 0 %}
+                                <span class="badge bg-warning">Basic Presence</span>
+                                {% else %}
+                                <span class="badge bg-danger">Not Connected</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if social_accounts|length == 0 %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('social.social_media') }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-link me-2"></i> Link Social Media
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gaming Profile Stats -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stat-icon bg-dark text-primary">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Gaming Profiles</h6>
+                            <p class="text-secondary small mb-0">Esports platforms</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="display-6 me-3">{{ esports_profiles|length }}</div>
+                        <div>
+                            <div class="mb-1">Gaming Accounts</div>
+                            <div>
+                                {% if esports_profiles|length > 2 %}
+                                <span class="badge bg-success">Enthusiast</span>
+                                {% elif esports_profiles|length > 0 %}
+                                <span class="badge bg-warning">Casual</span>
+                                {% else %}
+                                <span class="badge bg-danger">Not Connected</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if esports_profiles|length == 0 %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('social.esports_profiles') }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-plus me-2"></i> Add Gaming Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Details -->
+    <div class="row mb-4">
+        <!-- Fan Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card fan-card h-100">
+                <div class="position-relative">
+                    {% if verified_documents > 0 %}
+                    <div class="verification-badge">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <img src="https://images.unsplash.com/photo-1558744037-2f2f6f2fbf6a" class="card-img-top" alt="Esports event">
+                    
+                    <div class="card-body pt-0">
+                        <div class="text-center mt-n5 mb-3">
+                            <div class="avatar bg-dark rounded-circle p-2 mx-auto" style="width: 100px; height: 100px; border: 3px solid var(--furia-orange);">
+                                <img src="https://images.unsplash.com/photo-1503235930437-8c6293ba41f5" class="rounded-circle w-100 h-100" alt="Profile image">
+                            </div>
+                            
+                            <h4 class="mt-3 mb-0">{{ profile.full_name if profile else current_user.username }}</h4>
+                            <p class="text-secondary small">Member since {{ current_user.created_at.strftime('%B %Y') }}</p>
+                            
+                            <div class="d-flex justify-content-center gap-2 mb-3">
+                                {% if social_accounts %}
+                                    {% for account in social_accounts %}
+                                        {% if account.platform == 'twitter' %}
+                                            <a href="{{ account.profile_url }}" target="_blank" class="btn btn-sm btn-outline-light rounded-circle">
+                                                <i class="fab fa-twitter"></i>
+                                            </a>
+                                        {% elif account.platform == 'instagram' %}
+                                            <a href="{{ account.profile_url }}" target="_blank" class="btn btn-sm btn-outline-light rounded-circle">
+                                                <i class="fab fa-instagram"></i>
+                                            </a>
+                                        {% elif account.platform == 'facebook' %}
+                                            <a href="{{ account.profile_url }}" target="_blank" class="btn btn-sm btn-outline-light rounded-circle">
+                                                <i class="fab fa-facebook-f"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="px-4">
+                            {% if profile %}
+                                <div class="mb-3">
+                                    <h6 class="text-secondary mb-2">Location</h6>
+                                    <p class="mb-0">{{ profile.city }}, {{ profile.state }}, {{ profile.country }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-secondary mb-2">Primary Interests</h6>
+                                    <div>
+                                        {% if profile.interests %}
+                                            {% for interest in profile.interests.split(',')[:3] %}
+                                                <span class="badge bg-secondary me-1">{{ interest }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-secondary">No interests specified</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h6 class="text-secondary mb-2">Favorite Games</h6>
+                                    <div>
+                                        {% if profile.favorite_games %}
+                                            {% for game in profile.favorite_games.split(',')[:3] %}
+                                                <span class="badge bg-secondary me-1">{{ game }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-secondary">No games specified</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <p class="text-secondary">Complete your profile to see your fan information</p>
+                                    <a href="{{ url_for('profile.basic_info') }}" class="btn btn-sm btn-primary">
+                                        Complete Profile
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documents Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">
+                        <i class="fas fa-id-card me-2"></i> Identity Verification
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if documents %}
+                        <div class="row g-3">
+                            {% for document in documents %}
+                                <div class="col-md-6">
+                                    <div class="card document-card bg-dark">
+                                        {% if document.validated %}
+                                            <span class="document-badge badge bg-success">Verified</span>
+                                        {% else %}
+                                            <span class="document-badge badge bg-danger">Failed</span>
+                                        {% endif %}
+                                        
+                                        <div class="card-body text-center">
+                                            {% if document.doc_type == 'id' %}
+                                                <i class="fas fa-id-card fa-3x mb-3 text-primary"></i>
+                                            {% elif document.doc_type == 'cpf' %}
+                                                <i class="fas fa-id-badge fa-3x mb-3 text-primary"></i>
+                                            {% elif document.doc_type == 'passport' %}
+                                                <i class="fas fa-passport fa-3x mb-3 text-primary"></i>
+                                            {% elif document.doc_type == 'drivers_license' %}
+                                                <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                                            {% else %}
+                                                <i class="fas fa-file-alt fa-3x mb-3 text-primary"></i>
+                                            {% endif %}
+                                            
+                                            <h6>{{ document.doc_type|capitalize|replace('_', ' ') }}</h6>
+                                            <p class="small text-secondary mb-0">
+                                                {{ document.doc_number|truncate(8, True) }}
+                                            </p>
+                                            <p class="small text-secondary mb-0">
+                                                Uploaded: {{ document.uploaded_at.strftime('%Y-%m-%d') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('profile.documents') }}" class="btn btn-sm btn-outline-light">
+                                <i class="fas fa-plus me-2"></i> Add Another Document
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <img src="https://images.unsplash.com/photo-1499557354967-2b2d8910bcca" class="img-fluid rounded mb-3" style="max-height: 200px;" alt="Identity verification">
+                            <h5>Verify Your Identity</h5>
+                            <p class="text-secondary">
+                                Upload an official identification document to verify your identity and increase your fan credibility.
+                            </p>
+                            <a href="{{ url_for('profile.documents') }}" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i> Upload Document
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upcoming Events Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i> Upcoming Esports Events
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="https://images.unsplash.com/photo-1612151388040-9ec75d2de8c7" class="card-img-top" alt="Esports event">
+                    <div class="card-body">
+                        <h5 class="card-title">Exclusive Fan Access</h5>
+                        <p class="text-secondary">
+                            As a verified fan, you'll get priority access to upcoming esports tournaments and team meet & greets.
+                        </p>
+                        
+                        <div class="list-group list-group-flush mb-3">
+                            <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <h6 class="mb-0">FURIA Fan Meetup</h6>
+                                    <p class="small text-secondary mb-0">São Paulo, BR</p>
+                                </div>
+                                <span class="badge bg-primary">Coming Soon</span>
+                            </div>
+                            <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <h6 class="mb-0">ESL Pro League</h6>
+                                    <p class="small text-secondary mb-0">Rio de Janeiro, BR</p>
+                                </div>
+                                <span class="badge bg-primary">Coming Soon</span>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-dark mb-0">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="alert-heading">Fan Benefits</h6>
+                                    <p class="mb-0 small">Complete your profile verification to unlock access to exclusive esports events and team merchandise.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts and Analytics -->
+    <div class="row">
+        <!-- Favorite Teams Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i> Your Favorite Teams
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="teamsChart">
+                        {% if profile and profile.favorite_teams %}
+                            <canvas id="favoriteTeamsChart"></canvas>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-chart-pie fa-4x mb-3 text-secondary"></i>
+                                <h5>No Team Data</h5>
+                                <p class="text-secondary">
+                                    Add your favorite teams to see your team preferences.
+                                </p>
+                                <a href="{{ url_for('profile.interests') }}" class="btn btn-sm btn-outline-light">
+                                    Add Teams
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Games Distribution Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">
+                        <i class="fas fa-gamepad me-2"></i> Your Gaming Interests
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="gamesChart">
+                        {% if profile and profile.favorite_games %}
+                            <canvas id="favoriteGamesChart"></canvas>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-chart-bar fa-4x mb-3 text-secondary"></i>
+                                <h5>No Game Data</h5>
+                                <p class="text-secondary">
+                                    Add your favorite games to see your gaming preferences.
+                                </p>
+                                <a href="{{ url_for('profile.interests') }}" class="btn btn-sm btn-outline-light">
+                                    Add Games
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // If we have profile data, let's create some charts
+    {% if profile and profile.favorite_teams %}
+    // Favorite Teams Chart
+    const teamsCanvas = document.getElementById('favoriteTeamsChart');
+    if (teamsCanvas) {
+        const teamsList = "{{ profile.favorite_teams }}".split(',').map(team => team.trim());
+        const teamColors = [
+            '#ff5500', '#00a8ff', '#9c44dc', '#e91e63', '#46c93a',
+            '#ff9800', '#3f51b5', '#00bcd4', '#8bc34a', '#ff4081'
+        ];
+        
+        new Chart(teamsCanvas, {
+            type: 'pie',
+            data: {
+                labels: teamsList,
+                datasets: [{
+                    data: Array(teamsList.length).fill(1), // Equal weight for each team
+                    backgroundColor: teamColors.slice(0, teamsList.length),
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+    
+    {% if profile and profile.favorite_games %}
+    // Favorite Games Chart
+    const gamesCanvas = document.getElementById('favoriteGamesChart');
+    if (gamesCanvas) {
+        const gamesList = "{{ profile.favorite_games }}".split(',').map(game => game.trim());
+        const gameColors = [
+            '#46c93a', '#00a8ff', '#e91e63', '#9c44dc', '#ff5500',
+            '#3f51b5', '#00bcd4', '#ff9800', '#8bc34a', '#ff4081'
+        ];
+        
+        new Chart(gamesCanvas, {
+            type: 'bar',
+            data: {
+                labels: gamesList,
+                datasets: [{
+                    label: 'Interest Level',
+                    data: Array(gamesList.length).fill(1), // Equal interest in each game for demo
+                    backgroundColor: gameColors.slice(0, gamesList.length),
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        display: false
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+    
+    // Fan Score Animation
+    const fanScore = document.querySelector('.fan-score');
+    if (fanScore) {
+        const score = parseInt(fanScore.textContent);
+        let currentScore = 0;
+        const interval = setInterval(() => {
+            if (currentScore >= score) {
+                clearInterval(interval);
+                fanScore.textContent = score;
+            } else {
+                currentScore += 1;
+                fanScore.textContent = currentScore;
+            }
+        }, 20);
+    }
+});
+</script>
+{% endblock %}

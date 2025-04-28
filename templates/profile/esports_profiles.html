@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}Gaming Profiles | Know Your Fan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        <i class="fas fa-gamepad me-2"></i> Link Your Gaming Profiles
+                    </h2>
+                    
+                    <!-- Profile Completion Progress -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-2">Profile Completion</h6>
+                        <div class="progress" style="height: 10px;">
+                            <div id="completenessProgress" class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="small text-secondary">Final Step</span>
+                            <span class="small text-secondary">Complete <i class="fas fa-check-circle text-success"></i></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Navigation -->
+                    <div class="profile-navigation mb-4">
+                        <div class="d-flex flex-wrap">
+                            <a href="{{ url_for('profile.basic_info') }}" class="profile-nav-link">
+                                <i class="fas fa-address-card me-2"></i> Basic Info
+                            </a>
+                            <a href="{{ url_for('profile.interests') }}" class="profile-nav-link">
+                                <i class="fas fa-star me-2"></i> Interests
+                            </a>
+                            <a href="{{ url_for('profile.documents') }}" class="profile-nav-link">
+                                <i class="fas fa-id-card me-2"></i> Documents
+                            </a>
+                            <a href="{{ url_for('social.social_media') }}" class="profile-nav-link">
+                                <i class="fas fa-share-alt me-2"></i> Social Media
+                            </a>
+                            <a href="{{ url_for('social.esports_profiles') }}" class="profile-nav-link active">
+                                <i class="fas fa-gamepad me-2"></i> Gaming Profiles
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Esports Profiles Form -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Add Gaming/Esports Profile</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-secondary mb-4">
+                                        Link your gaming platform profiles to validate your esports involvement and increase your fan credibility.
+                                    </p>
+                                    
+                                    <form method="POST" action="{{ url_for('social.esports_profiles') }}" class="needs-validation" novalidate>
+                                        {{ form.hidden_tag() }}
+                                        
+                                        <div class="mb-3">
+                                            <label for="platform" class="form-label">{{ form.platform.label }}</label>
+                                            {{ form.platform(class="form-select") }}
+                                            {% for error in form.platform.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">{{ form.username.label }}</label>
+                                            {{ form.username(class="form-control", placeholder="Your username on this platform") }}
+                                            {% for error in form.username.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label for="profile_url" class="form-label">{{ form.profile_url.label }}</label>
+                                            {{ form.profile_url(class="form-control", placeholder="https://...") }}
+                                            <div class="form-text">
+                                                Full URL to your gaming profile (must start with http:// or https://)
+                                            </div>
+                                            {% for error in form.profile_url.errors %}
+                                                <div class="text-danger mt-1 small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2">
+                                            {{ form.submit(class="btn btn-primary") }}
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Platform Examples -->
+                            <div class="card bg-dark">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Platform URL Examples</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span><i class="fab fa-steam me-2"></i> Steam</span>
+                                            <span class="text-secondary small">https://steamcommunity.com/id/username</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-chess-knight me-2"></i> Battle.net</span>
+                                            <span class="text-secondary small">https://battle.net/en/battle-tag</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-gamepad me-2"></i> Riot Games</span>
+                                            <span class="text-secondary small">https://riotgames.com/profile/username</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                            <span><i class="fab fa-playstation me-2"></i> PlayStation</span>
+                                            <span class="text-secondary small">https://psnprofiles.com/username</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <!-- Linked Gaming Profiles -->
+                            <div class="card">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">Your Gaming Profiles</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if esports_profiles %}
+                                        <div class="list-group">
+                                            {% for profile in esports_profiles %}
+                                                <div class="list-group-item list-group-item-action bg-transparent border-secondary">
+                                                    <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                                        <div class="d-flex align-items-center">
+                                                            {% if profile.platform == 'steam' %}
+                                                                <i class="fab fa-steam fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'battlenet' %}
+                                                                <i class="fas fa-chess-knight fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'riot' %}
+                                                                <i class="fas fa-gamepad fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'epic' %}
+                                                                <i class="fas fa-ghost fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'ea' %}
+                                                                <i class="fab fa-ea fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'psn' %}
+                                                                <i class="fab fa-playstation fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'xbox' %}
+                                                                <i class="fab fa-xbox fa-2x me-3"></i>
+                                                            {% elif profile.platform == 'nintendo' %}
+                                                                <i class="fas fa-gamepad fa-2x me-3"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-gamepad fa-2x me-3"></i>
+                                                            {% endif %}
+                                                            
+                                                            <div>
+                                                                <h6 class="mb-0">{{ profile.platform|capitalize }}</h6>
+                                                                <p class="mb-0 small text-secondary">{{ profile.username }}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <form action="{{ url_for('social.remove_esports_profile', id=profile.id) }}" method="post" class="d-inline">
+                                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Relevance Score -->
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="text-secondary small me-2">Esports Relevance:</div>
+                                                        <div class="flex-grow-1 esports-validation-result" data-relevance-score="{{ profile.relevance_score or 0 }}">
+                                                            <div class="relevance-score">
+                                                                <div class="relevance-score-fill" style="width: {{ (profile.relevance_score or 0) * 100 }}%;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-2 small">
+                                                            {% if profile.relevance_score and profile.relevance_score > 0.7 %}
+                                                                <span class="badge bg-success">High</span>
+                                                            {% elif profile.relevance_score and profile.relevance_score > 0.4 %}
+                                                                <span class="badge bg-warning">Medium</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Low</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-gamepad fa-4x mb-3 text-secondary"></i>
+                                            <h5>No Gaming Profiles Connected</h5>
+                                            <p class="text-secondary">
+                                                Link your gaming platform profiles to validate your gaming activity and esports involvement.
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="{{ url_for('social.social_media') }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left me-2"></i> Previous
+                                        </a>
+                                        <a href="{{ url_for('dashboard.overview') }}" class="btn btn-primary">
+                                            Go to Dashboard <i class="fas fa-tachometer-alt ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Gaming Setup -->
+                            <div class="card mt-4">
+                                <div class="card-header bg-transparent">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-desktop me-2"></i> Gaming Setup
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <img src="https://images.unsplash.com/photo-1598550487031-0898b4852123" class="card-img-top" alt="Gaming setup">
+                                    <div class="card-body">
+                                        <p class="text-secondary small mb-0">
+                                            Coming soon: Share your gaming setup and hardware specifications to complete your esports fan profile!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Platform-specific URL suggestions
+    const platformSelect = document.getElementById('platform');
+    const profileUrlInput = document.getElementById('profile_url');
+    
+    if (platformSelect && profileUrlInput) {
+        platformSelect.addEventListener('change', function() {
+            const platform = this.value;
+            
+            // Update URL placeholder based on platform
+            switch(platform) {
+                case 'steam':
+                    profileUrlInput.placeholder = 'https://steamcommunity.com/id/username';
+                    break;
+                case 'battlenet':
+                    profileUrlInput.placeholder = 'https://battle.net/en/battle-tag';
+                    break;
+                case 'riot':
+                    profileUrlInput.placeholder = 'https://riotgames.com/profile/username';
+                    break;
+                case 'epic':
+                    profileUrlInput.placeholder = 'https://epicgames.com/id/username';
+                    break;
+                case 'ea':
+                    profileUrlInput.placeholder = 'https://ea.com/profile/username';
+                    break;
+                case 'psn':
+                    profileUrlInput.placeholder = 'https://psnprofiles.com/username';
+                    break;
+                case 'xbox':
+                    profileUrlInput.placeholder = 'https://xboxgamertag.com/search/username';
+                    break;
+                case 'nintendo':
+                    profileUrlInput.placeholder = 'https://nintendo.com/profile/username';
+                    break;
+                case 'faceit':
+                    profileUrlInput.placeholder = 'https://faceit.com/player/username';
+                    break;
+                case 'esea':
+                    profileUrlInput.placeholder = 'https://play.esea.net/users/username';
+                    break;
+                default:
+                    profileUrlInput.placeholder = 'https://...';
+            }
+        });
+    }
+    
+    // Initialize relevance score indicators
+    const esportsValidationResults = document.querySelectorAll('.esports-validation-result');
+    
+    esportsValidationResults.forEach(resultElement => {
+        const relevanceScore = parseFloat(resultElement.getAttribute('data-relevance-score'));
+        const fillElement = resultElement.querySelector('.relevance-score-fill');
+        
+        if (fillElement) {
+            fillElement.style.width = `${relevanceScore * 100}%`;
+            
+            // Set color based on score
+            if (relevanceScore >= 0.7) {
+                fillElement.classList.add('bg-success');
+            } else if (relevanceScore >= 0.4) {
+                fillElement.classList.add('bg-warning');
+            } else {
+                fillElement.classList.add('bg-danger');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

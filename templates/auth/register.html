@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}Register | Know Your Fan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-transparent text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i> Create Your Fan Account
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('auth.register') }}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            <label for="username" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username(class="form-control", placeholder="Choose a username") }}
+                            <div class="invalid-feedback">
+                                Username must be between 3 and 64 characters.
+                            </div>
+                            {% for error in form.username.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label">{{ form.email.label }}</label>
+                            {{ form.email(class="form-control", placeholder="Enter your email") }}
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
+                            {% for error in form.email.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label">{{ form.password.label }}</label>
+                            {{ form.password(class="form-control", placeholder="Create a password (min. 8 characters)") }}
+                            <div class="invalid-feedback">
+                                Password must be at least 8 characters long.
+                            </div>
+                            {% for error in form.password.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label">{{ form.confirm_password.label }}</label>
+                            {{ form.confirm_password(class="form-control", placeholder="Enter your password again") }}
+                            <div class="invalid-feedback">
+                                Passwords must match.
+                            </div>
+                            {% for error in form.confirm_password.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            {{ form.agree_terms(class="form-check-input") }}
+                            <label class="form-check-label" for="agree_terms">
+                                {{ form.agree_terms.label }}
+                            </label>
+                            <div class="invalid-feedback">
+                                You must agree to the terms and conditions.
+                            </div>
+                            {% for error in form.agree_terms.errors %}
+                                <div class="text-danger mt-1 small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-transparent text-center py-3">
+                    Already have an account? 
+                    <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Sign in</a>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Why Register?</h5>
+                    <ul class="mb-0">
+                        <li>Verify yourself as an authentic esports fan</li>
+                        <li>Connect with your favorite teams and players</li>
+                        <li>Get access to exclusive events and merchandise</li>
+                        <li>Share your passion with the esports community</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Information -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-shield-alt me-2"></i> Your Privacy Matters
+                    </h5>
+                    <p class="card-text text-secondary small">
+                        We use AI-powered validation to verify your identity and fan status. All personal information is encrypted and securely processed. Documents are only used for verification and not stored permanently.
+                    </p>
+                    <p class="card-text text-secondary small mb-0">
+                        Read our full <a href="{{ url_for('privacy') }}" class="text-decoration-none">Privacy Policy</a> and <a href="{{ url_for('terms') }}" class="text-decoration-none">Terms of Service</a> for more details.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Register form validation
+document.addEventListener('DOMContentLoaded', function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    Array.from(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    });
+    
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            const strengthIndicator = document.createElement('div');
+            strengthIndicator.className = 'progress mt-2';
+            strengthIndicator.style.height = '5px';
+            
+            const strengthBar = document.createElement('div');
+            strengthBar.className = 'progress-bar';
+            strengthBar.style.width = `${(strength / 4) * 100}%`;
+            
+            if (strength < 2) {
+                strengthBar.className += ' bg-danger';
+            } else if (strength < 4) {
+                strengthBar.className += ' bg-warning';
+            } else {
+                strengthBar.className += ' bg-success';
+            }
+            
+            strengthIndicator.appendChild(strengthBar);
+            
+            // Remove old indicator if exists
+            const oldIndicator = this.nextElementSibling;
+            if (oldIndicator && oldIndicator.classList.contains('progress')) {
+                oldIndicator.remove();
+            }
+            
+            // Add new indicator
+            if (password.length > 0) {
+                this.parentNode.insertBefore(strengthIndicator, this.nextSibling);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
