@@ -253,12 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('input[name="username"]').placeholder = 'Username without @ (e.g., esports_fan)';
             } else if (platform === 'instagram') {
                 document.querySelector('input[name="username"]').placeholder = 'Instagram username';
-            } else if (platform === 'youtube') {
-                document.querySelector('input[name="username"]').placeholder = 'Channel name or ID';
-            } else {
-                document.querySelector('input[name="username"]').placeholder = 'Your username on this platform';
             }
-            
             // Update URL placeholder
             if (platform === 'twitter') {
                 document.querySelector('input[name="profile_url"]').placeholder = 'https://twitter.com/username';
@@ -266,10 +261,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('input[name="profile_url"]').placeholder = 'https://instagram.com/username';
             } else if (platform === 'facebook') {
                 document.querySelector('input[name="profile_url"]').placeholder = 'https://facebook.com/username';
-            } else if (platform === 'youtube') {
-                document.querySelector('input[name="profile_url"]').placeholder = 'https://youtube.com/c/channelname';
-            } else if (platform === 'tiktok') {
-                document.querySelector('input[name="profile_url"]').placeholder = 'https://tiktok.com/@username';
             }
         });
     }

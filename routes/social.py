@@ -5,8 +5,69 @@ from models import SocialMedia, EsportsProfile
 from forms import SocialMediaForm, EsportsProfileForm
 from utils import profile_required
 from ai_validation import validate_esports_profile, analyze_social_media
+import random
 
 social_bp = Blueprint('social', __name__, url_prefix='/social')
+
+
+twitter_follows = ['FURIA', 'Cloud9', 'FaZeClan', 'TeamLiquid', 'NAVI', 'G2 Esports']
+twitter_interests = ['CSGO', 'Valorant', 'LeagueOfLegends', 'Overwatch', 'Apex Legends']
+
+instagram_follows = ['furiagg', 'navi_gaming', 'teamliquid', 'g2esports', 'cloud9gg']
+instagram_interests = ['CSGO', 'Dota2', 'Valorant', 'PUBG', 'Rainbow6']
+
+facebook_likes = ['FURIA Esports', 'ESL Gaming', 'DreamHack', 'Red Bull Gaming', 'EVO Championship']
+facebook_interests = ['gaming', 'esports', 'streaming', 'competitive gaming', 'pro players']
+
+
+def random_subset(lst):
+    chance = random.random()
+    if chance < 0.2:
+        k = 0
+    elif chance < 0.5:
+        k = 1
+    elif chance < 0.8:
+        k = random.randint(2, min(3, len(lst)))
+    else:
+        k = len(lst)
+    return random.sample(lst, k) if k > 0 else []
+
+def compute_engagement(follows, interests, max_items):
+    """Calcula engajamento com base no percentual de itens usados."""
+    max_total = max_items * 2  # total possível (follows + interests)
+    actual_total = len(follows) + len(interests)
+    base_score = actual_total / max_total if max_total > 0 else 0
+    noise = random.uniform(-0.05, 0.05)  # variação para parecer natural
+    return round(min(1.0, max(0.0, base_score + noise)), 2)
+
+def generate_mock_data():
+    twitter_f = random_subset(twitter_follows)
+    twitter_i = random_subset(twitter_interests)
+
+    insta_f = random_subset(instagram_follows)
+    insta_i = random_subset(instagram_interests)
+
+    fb_likes = random_subset(facebook_likes)
+    fb_i = random_subset(facebook_interests)
+
+    return {
+        'twitter': {
+            'follows': twitter_f,
+            'interests': twitter_i,
+            'engagement': compute_engagement(twitter_f, twitter_i, 5)
+        },
+        'instagram': {
+            'follows': insta_f,
+            'interests': insta_i,
+            'engagement': compute_engagement(insta_f, insta_i, 5)
+        },
+        'facebook': {
+            'likes': fb_likes,
+            'interests': fb_i,
+            'engagement': compute_engagement(fb_likes, fb_i, 5)
+        }
+    }
+
 
 @social_bp.route('/media', methods=['GET', 'POST'])
 @login_required
@@ -154,23 +215,7 @@ def analyze_social_platform(platform, id):
     
     # In a real app, we would fetch actual data from the platform's API
     # For demo purposes, we'll simulate some data
-    mock_data = {
-        'twitter': {
-            'follows': ['FURIA', 'Cloud9', 'FaZeClan', 'TeamLiquid'],
-            'interests': ['CSGO', 'Valorant', 'LeagueOfLegends'],
-            'engagement': 0.85
-        },
-        'instagram': {
-            'follows': ['furiagg', 'navi_gaming', 'teamliquid'],
-            'interests': ['CSGO', 'Dota2'],
-            'engagement': 0.75
-        },
-        'facebook': {
-            'likes': ['FURIA Esports', 'ESL Gaming'],
-            'interests': ['gaming', 'esports', 'streaming'],
-            'engagement': 0.65
-        }
-    }
+    mock_data = generate_mock_data()
     
     # Get mock data for the platform or default to empty
     platform_data = mock_data.get(social.platform, {})
@@ -178,4 +223,6 @@ def analyze_social_platform(platform, id):
     # In a real app, we would analyze actual data with AI
     analysis_result = analyze_social_media(platform_data, social.platform)
     
+    print(analysis_result)
+
     return jsonify(analysis_result)
