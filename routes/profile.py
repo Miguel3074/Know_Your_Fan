@@ -104,8 +104,8 @@ def documents():
                 user_id=current_user.id,
                 doc_type=form.doc_type.data,
                 doc_number=form.doc_number.data,
-                doc_url=file_path,  # In production, this would be a Cloudinary URL
-                validated=validation_result.get('validation_score', 0) > 0.7,
+                doc_url=file_path,
+                validated = float(validation_result.get('validation_score',0)) > 0.7,
                 validation_result=str(validation_result)
             )
             
