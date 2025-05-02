@@ -73,7 +73,7 @@ Desenvolver um app web que:
 
 ### 1. Clone o repositório
 
-git clone https://github.com/seu-usuario/know-your-fan.git
+git clone https://github.com/Miguel3074/Know_Your_Fan.git
 cd know-your-fan
 
 ### 2. Crie e ative o ambiente virtual
@@ -90,14 +90,13 @@ pip install -r requirements.txt
 ### 4. Rode a aplicação
 
 python main.py
-Acesse em http://localhost:5000.
+Acesse o link gerado
 
 ### 📌 Observações
-Em produção, o armazenamento de documentos deve ser feito com serviços como Cloudinary ou S3.
 
 A IA utilizada para validação de documentos pode ser substituída por uma API externa.
 
-Integrações com redes sociais devem respeitar as permissões de cada plataforma.
+Integrações com redes sociais nao foi aplicada efetivamente por nao possuir acesso as apis de desenvolvedor de cada rede social
 
 📬 Contato
 Desenvolvido por Miguel dos Anjos Brack como parte do desafio "Know Your Fan" – FURIA.
