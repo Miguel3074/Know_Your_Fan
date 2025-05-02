@@ -54,22 +54,6 @@ Desenvolver um app web que:
 
 ---
 
-## 📂 Estrutura do Projeto
-
-## Know_Your_Fan/
-├── app.py # App principal Flask
-├── main.py # Entry point
-├── models/ # Modelos de banco de dados
-├── routes/ # Rotas (auth, profile, etc.)
-├── templates/ # Templates HTML (Jinja)
-├── static/ # Arquivos estáticos (CSS, JS)
-├── uploads/ # Armazenamento temporário de documentos
-├── requirements.txt # Dependências do projeto
-└── README.md # Este arquivo
-
-
----
-
 ## ▶️ Como Rodar Localmente
 
 ### 1. Clone o repositório
