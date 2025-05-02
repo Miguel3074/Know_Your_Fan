@@ -43,6 +43,7 @@ Desenvolver um app web que:
 ## 🛠️ Tecnologias Utilizadas
 
 - **Python 3.11**
+- **PostgreSQL Para Banco de Dados**
 - **Flask**
 - **Flask-Login / Flask-WTF**
 - **SQLAlchemy**
@@ -87,7 +88,13 @@ source venv/bin/activate  # No Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 
-### 4. Rode a aplicação
+### 4.Crie um Banco de dados Postgree
+
+createdb -U postgres nome_do_banco
+
+Preenher dai .ENV local com as informacoes
+
+### 5. Rode a aplicação
 
 python main.py
 Acesse o link gerado
